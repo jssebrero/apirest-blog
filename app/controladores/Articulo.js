@@ -82,7 +82,18 @@ export class RutasArticulos {
 
     async listar(req, res) {
         try {
-            const articulos = await Articulo.find({}).sort({ fecha: -1 });
+
+            let hayTotalMostar = req.params.totalMostrar && req.params.totalMostrar > 0 && req.params.totalMostrar !== undefined ? true : false;
+
+            /*if(req.params.totalMostrar && req.params.totalMostrar > 0 && req.params.totalMostrar !== undefined){
+                const totalMostrar = parseInt(req.params.totalMostrar);
+                
+                //console.log("Total a mostrar: ", totalMostrar);
+                hayTotalMostar = true;
+
+            }*/
+            
+            const articulos = hayTotalMostar ? await Articulo.find({}).limit(1) : await Articulo.find({});
     
             if (!articulos || articulos.length === 0) {
                 return res.status(404).json({
@@ -100,6 +111,60 @@ export class RutasArticulos {
             return res.status(500).json({
                 status: "Error",
                 mensaje: "Error al obtener los artículos"
+            });
+        }
+    }
+
+    async listarArticulo(req, res) {
+        try {
+            const id = req.params.id;
+            const articulo = await Articulo.findById(id);
+    
+            if (!articulo) {
+                return res.status(404).json({
+                    status: "Error",
+                    mensaje: "No se encontró el artículo"
+                });
+            }
+    
+            return res.status(200).json({
+                data:{status: "Exito",
+                    articulo
+                }
+            });
+        } catch (error) {
+            console.error("Error al listar el artículo:", error);
+            return res.status(500).json({
+                status: "Error",
+                mensaje: "Error al obtener el artículo"
+            });
+        }
+    }
+
+    async eliminar(req, res) {
+        try {
+            const id = req.params.id;
+            const articuloEliminado = await Articulo.findByIdAndDelete(id);
+    
+            if (!articuloEliminado) {
+                return res.status(404).json({
+                    status: "Error",
+                    mensaje: "No se encontró el artículo para eliminar"
+                });
+            }
+    
+            return res.status(200).json(
+                {
+                    data:{status: "Exito",
+                    mensaje: "Artículo eliminado correctamente",
+                    articulo: articuloEliminado
+                }
+            });
+        } catch (error) {
+            console.error("Error al eliminar el artículo:", error);
+            return res.status(500).json({
+                status: "Error",
+                mensaje: "Error al eliminar el artículo"
             });
         }
     }

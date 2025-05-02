@@ -11,7 +11,11 @@
 
     router.post("/articulo", rutaArticulos.almacenar);
 
-    router.get("/articulos", rutaArticulos.listar);
+    router.get("/articulos/:totalMostrar?", rutaArticulos.listar);
+
+    router.get("/articulo/:id", rutaArticulos.listarArticulo);
+
+    router.delete("/articulo/:id", rutaArticulos.eliminar);
     
     // Exportar el router
     export default router;
