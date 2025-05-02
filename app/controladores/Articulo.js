@@ -80,4 +80,28 @@ export class RutasArticulos {
 
     }
 
+    async listar(req, res) {
+        try {
+            const articulos = await Articulo.find({}).sort({ fecha: -1 });
+    
+            if (!articulos || articulos.length === 0) {
+                return res.status(404).json({
+                    status: "Error",
+                    mensaje: "No hay articulos para mostrar"
+                });
+            }
+    
+            return res.status(200).json({
+                status: "Exito",
+                articulos
+            });
+        } catch (error) {
+            console.error("Error al listar artículos:", error);
+            return res.status(500).json({
+                status: "Error",
+                mensaje: "Error al obtener los artículos"
+            });
+        }
+    }
+
 }

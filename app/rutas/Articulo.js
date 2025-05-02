@@ -4,12 +4,14 @@
     //Instancia de Router
     const router = Router();
 
-    const rutaPueba = new RutasArticulos();
+    const rutaArticulos = new RutasArticulos();
 
     // Ruta de prueba
-    router.get("/ruta-de-prueba", rutaPueba.prueba);
+    router.get("/ruta-de-prueba", rutaArticulos.prueba);
 
-    router.post("/articulo", rutaPueba.almacenar);
+    router.post("/articulo", rutaArticulos.almacenar);
+
+    router.get("/articulos", rutaArticulos.listar);
     
     // Exportar el router
     export default router;
