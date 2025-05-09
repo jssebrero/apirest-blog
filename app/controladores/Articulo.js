@@ -1,5 +1,5 @@
-import validator from 'validator';
 import Articulo from '../modelos/Articulo.js'
+import { Validar } from '../helpers/validar.js';
 
 export class RutasArticulos {
 
@@ -27,32 +27,10 @@ export class RutasArticulos {
         //Recoger parametros que se almacenaran
         let parametros = req.body;
 
-        //Validar datos
-        try {
-
-            let validarTitulo =  !validator.isEmpty(parametros.titulo);
-            let validarContenido = !validator.isEmpty(parametros.contenido);
-
-            if(!validarTitulo || !validarContenido){
-
-                throw new Error("informacion no valida");
-                console.log("Error en la validacion de datos");
-
-            }
-
-            
-        } catch (error) {
-            return res.status(400).json({
-                status: "Error",
-                mensaje: "datos invalidos"
-            });
-        }
+        Validar.articulo(parametros);
 
         //Crear objeto a guardar
         const articulo = new Articulo(parametros);
-
-        //Asiganr varlores al objeto basado en el modelo
-
 
         //Almacenar el articulo
         articulo.save()
@@ -77,6 +55,10 @@ export class RutasArticulos {
 
         //Mensaje de resultado satisfactorio
         //return res.status(200).json(parametros);
+        return res.status(200).json({
+                status: "Exito",	
+                mensaje: parametros
+            });
 
     }
 
@@ -84,14 +66,6 @@ export class RutasArticulos {
         try {
 
             let hayTotalMostar = req.params.totalMostrar && req.params.totalMostrar > 0 && req.params.totalMostrar !== undefined ? true : false;
-
-            /*if(req.params.totalMostrar && req.params.totalMostrar > 0 && req.params.totalMostrar !== undefined){
-                const totalMostrar = parseInt(req.params.totalMostrar);
-                
-                //console.log("Total a mostrar: ", totalMostrar);
-                hayTotalMostar = true;
-
-            }*/
             
             const articulos = hayTotalMostar ? await Articulo.find({}).limit(1) : await Articulo.find({});
     
@@ -108,7 +82,7 @@ export class RutasArticulos {
             });
         } catch (error) {
             console.error("Error al listar artículos:", error);
-            return res.status(500).json({
+            return res.status(400).json({
                 status: "Error",
                 mensaje: "Error al obtener los artículos"
             });
@@ -134,7 +108,7 @@ export class RutasArticulos {
             });
         } catch (error) {
             console.error("Error al listar el artículo:", error);
-            return res.status(500).json({
+            return res.status(400).json({
                 status: "Error",
                 mensaje: "Error al obtener el artículo"
             });
@@ -162,7 +136,7 @@ export class RutasArticulos {
             });
         } catch (error) {
             console.error("Error al eliminar el artículo:", error);
-            return res.status(500).json({
+            return res.status(400).json({
                 status: "Error",
                 mensaje: "Error al eliminar el artículo"
             });
@@ -175,13 +149,7 @@ export class RutasArticulos {
             const id = req.params.id;
             const parametros = req.body;
 
-            // Validar datos
-            if (!parametros.titulo || !parametros.contenido) {
-                return res.status(400).json({
-                    status: "Error",
-                    mensaje: "Datos inválidos"
-                });
-            }
+            Validar.articulo(parametros);
 
             const articuloActualizado = await Articulo.findByIdAndUpdate(id, parametros, { new: true });
 
@@ -199,7 +167,7 @@ export class RutasArticulos {
             });
         } catch (error) {
             console.error("Error al editar el artículo:", error);
-            return res.status(500).json({
+            return res.status(400).json({
                 status: "Error",
                 mensaje: "Error al editar el artículo"
             });
