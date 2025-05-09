@@ -16,6 +16,8 @@
     router.get("/articulo/:id", rutaArticulos.listarArticulo);
 
     router.delete("/articulo/:id", rutaArticulos.eliminar);
+
+    router.put("/articulo/:id", rutaArticulos.editar);
     
     // Exportar el router
     export default router;

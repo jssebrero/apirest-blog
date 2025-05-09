@@ -169,4 +169,42 @@ export class RutasArticulos {
         }
     }
 
+    async editar(req, res) {
+
+        try {
+            const id = req.params.id;
+            const parametros = req.body;
+
+            // Validar datos
+            if (!parametros.titulo || !parametros.contenido) {
+                return res.status(400).json({
+                    status: "Error",
+                    mensaje: "Datos inválidos"
+                });
+            }
+
+            const articuloActualizado = await Articulo.findByIdAndUpdate(id, parametros, { new: true });
+
+            if (!articuloActualizado) {
+                return res.status(404).json({
+                    status: "Error",
+                    mensaje: "No se encontró el artículo para editar"
+                });
+            }
+
+            return res.status(200).json({
+                data:{status: "Exito",
+                    articulo: articuloActualizado
+                }
+            });
+        } catch (error) {
+            console.error("Error al editar el artículo:", error);
+            return res.status(500).json({
+                status: "Error",
+                mensaje: "Error al editar el artículo"
+            });
+        }
+
+    }
+
 }
